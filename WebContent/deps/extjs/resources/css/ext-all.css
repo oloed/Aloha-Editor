@@ -4,7 +4,7 @@
  * licensing@extjs.com
  * http://www.extjs.com/license
  */
-html,body,div,dl,dt,dd,pre,form,fieldset,input,blockquote,.ext-root th,.ext-root td{margin:0;padding:0;}img,body,html{border:0;}address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal;}caption,th {text-align:left;}q:before,q:after{content:'';}.ext-el-mask {
+.ext-el-mask {
     z-index: 100;
     position: absolute;
     top:0;
