@@ -6,7 +6,7 @@
 	url = https://github.com/alohaeditor/Aloha-Plugin-Format.git
 [submodule "WebContent/plugins/com.gentics.aloha.plugins.Link"]
 	path = WebContent/plugins/com.gentics.aloha.plugins.Link
-	url = https://github.com/alohaeditor/Aloha-Plugin-Link.git
+	url = git://github.com/scribu/Aloha-Plugin-Link.git
 [submodule "WebContent/plugins/com.gentics.aloha.plugins.List"]
 	path = WebContent/plugins/com.gentics.aloha.plugins.List
 	url = https://github.com/alohaeditor/Aloha-Plugin-List.git
