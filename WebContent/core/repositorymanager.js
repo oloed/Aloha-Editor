@@ -208,19 +208,21 @@ GENTICS.Aloha.RepositoryManager.prototype.queryCallback = function (cb, items, t
 
 	// if we all callbacks came back we are done!
 	if (this.openCallbacks.length == 0) {
-		
+
 		// unset the timer...
 		clearTimeout(timer);
-		
+
 		// sort items by weight
-		items.sort(function (a,b) {return b.weight - a.weight;});
-	    
+		items.sort(function (a,b) {
+			return (b.weight || 0) - (a.weight || 0);
+		});
+
 		// prepare result data for the JSON Reader
 		var result =  {
-			    results: items.length,
-			    items: items
-		 	 };
-		
+			results: items.length,
+			items: items
+		};
+
 		// Give data back.
 		cb.call( this, result);
 	}

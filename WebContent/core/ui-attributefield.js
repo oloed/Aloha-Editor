@@ -88,7 +88,7 @@ Ext.ux.AlohaAttributeField = Ext.extend(Ext.form.ComboBox, {
 		},
 		'keyup': function (obj, event) {
 		    if ((event.keyCode == 13 || event.keyCode == 27) && !this.ALOHAwasExpanded) {
-		    	// work around stupid behavior when moving focus :/
+		    	// work around stupid behavior when moving focus
 		    	setTimeout( function() {
 			    	// Set focus to link element and select the object
 			        GENTICS.Aloha.activeEditable.obj[0].focus();
