@@ -62,19 +62,21 @@ jQuery.fn.between = function(content, offset) {
 
 jQuery.fn.removeCss = function( cssName ) {
 	return this.each( function() {
-		var oldstyle = jQuery(this).attr('style');
-    	var style = jQuery.grep(jQuery(this).attr('style').split(";"), function(curStyleAttr) {
-        			var curStyleAttrName = curStyleAttr.split(":");
-        			if (curStyleAttrName[0]) {
-        				if ( curStyleAttrName[0].toUpperCase().trim().indexOf(cssName.toUpperCase()) == -1) {
-        					return curStyleAttr;
-        				}
+		var style = jQuery(this).attr('style');
+		if (style != null) {
+    		style = jQuery.grep(style.split(";"), function(curStyleAttr) {
+        		var curStyleAttrName = curStyleAttr.split(":");
+        		if (curStyleAttrName[0]) {
+        			if ( curStyleAttrName[0].toUpperCase().trim().indexOf(cssName.toUpperCase()) == -1) {
+        				return curStyleAttr;
         			}
-                }).join(";").trim();
-		jQuery(this).removeAttr('style');
-    	if (style.trim()) {
-    		jQuery(this).attr('style', style);
-    	}
+        		}
+            }).join(";").trim();
+			jQuery(this).removeAttr('style');
+    		if (style.trim()) {
+    			jQuery(this).attr('style', style);
+    		}
+		}
     	return jQuery(this);
     });
 };
