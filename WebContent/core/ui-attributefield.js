@@ -57,6 +57,22 @@ Ext.ux.AlohaAttributeField = Ext.extend(Ext.form.ComboBox, {
 		}
 		this.collapse();
 	},
+	finishEditing : function () {
+    	// when no resource item was selected, remove any marking of the target object
+    	if (!this.resourceItem) {
+    		GENTICS.Aloha.RepositoryManager.markObject(this.targetObject);
+    	}
+        // remove the highlighting and restore original color if was set before
+        var target = jQuery(this.getTargetObject());
+        if ( target ) {
+        	if ( color = target.attr('data-original-background-color')  ) {
+        		jQuery(target).css('background-color', color);
+        	} else {
+        		jQuery(target).removeCss('background-color');
+        	}
+    		jQuery(target).removeAttr('data-original-background-color');
+        }
+	},
     listeners: {
 		// repository object types could have changed
 		'beforequery': function (event) {
@@ -72,9 +88,6 @@ Ext.ux.AlohaAttributeField = Ext.extend(Ext.form.ComboBox, {
 			}
 		},
     	'keydown': function (obj, event) {
-			// unset the currently selected object
-			this.resourceItem = null;
-
 			// on ENTER or ESC leave the editing
 			// just remember here the status and remove cursor on keyup event
 			// Otherwise cursor moves to content and no more blur event happens!!??
@@ -95,6 +108,14 @@ Ext.ux.AlohaAttributeField = Ext.extend(Ext.form.ComboBox, {
 			        GENTICS.Aloha.Selection.getRangeObject().select();
 		    	}, 0);
 		    }
+
+			// when a resource item was (initially) set, but the current value
+			// is different from the reference value, we unset the resource item
+			if (this.resourceItem && this.resourceValue !== this.wrap.dom.children[0].value) {
+				this.resourceItem = null;
+				this.resourceValue = null;
+			}
+
 		    // update attribute, but only if no resource item was selected
 		    if (!this.resourceItem) {
 		    	var v = this.wrap.dom.children[0].value;
@@ -111,28 +132,10 @@ Ext.ux.AlohaAttributeField = Ext.extend(Ext.form.ComboBox, {
 	        target.css('background-color','Highlight');
 	    },
 	    'blur': function(obj, event) {
-	        // remove the highlighting and restore original color if was set before
-	        var target = jQuery(this.getTargetObject());
-	        if ( target ) {
-	        	if ( color = target.attr('data-original-background-color')  ) {
-	        		jQuery(target).css('background-color', color);
-	        	} else {
-	        		jQuery(target).removeCss('background-color');
-	        	}
-	    		jQuery(target).removeAttr('data-original-background-color');
-	        }
+	    	this.finishEditing();
 	    },
 	    'hide': function(obj, event) {
-	        // remove the highlighting and restore original color if was set before
-	        var target = jQuery(this.getTargetObject());
-	        if ( target ) {
-	        	if ( color = target.attr('data-original-background-color')  ) {
-	        		jQuery(target).css('background-color', color);
-	        	} else {
-	        		jQuery(target).removeCss('background-color');
-	        	}
-	    		jQuery(target).removeAttr('data-original-background-color');
-	        }
+	    	this.finishEditing();
 	    },
 	    'expand': function (combo ) {
 	    	if( this.noQuery ) {
@@ -159,10 +162,17 @@ Ext.ux.AlohaAttributeField = Ext.extend(Ext.form.ComboBox, {
 	    	displayField = (displayField) ? displayField : this.displayField;
 			// TODO split display field by '.' and get corresponding attribute, because it could be a properties attribute.
 			var v = item[displayField];
+			// set the value into the field
 	    	this.setValue( v );
+	    	// store the value to be the "reference" value for the currently selected resource item
+	    	this.resourceValue = v;
+	    	// set the attribute to the target object
 			this.setAttribute(this.targetAttribute, item[this.valueField]);
 			// call the repository marker
 			GENTICS.Aloha.RepositoryManager.markObject(this.targetObject, item);
+    	} else {
+    		// unset the reference value, since no resource item is selected
+    		this.resourceValue = null;
     	}
     },
     getItem: function( ) {
