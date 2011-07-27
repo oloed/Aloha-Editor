@@ -250,8 +250,8 @@ GENTICS.Aloha.Markup.prototype.insertHTMLBreak = function(selectionTree, rangeOb
 						} else {
 							// go to the parent
 							checkObj = checkObj.parentNode;
-							// found a blocklevel element, we are done
-							if (GENTICS.Utils.Dom.isBlockLevelElement(checkObj)) {
+							// found a blocklevel or list element, we are done
+							if (GENTICS.Utils.Dom.isBlockLevelElement(checkObj) || GENTICS.Utils.Dom.isListElement(checkObj)) {
 								break;
 							}
 							// reached the limit object, we are done
