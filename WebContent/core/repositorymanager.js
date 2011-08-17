@@ -208,19 +208,21 @@ GENTICS.Aloha.RepositoryManager.prototype.queryCallback = function (cb, items, t
 
 	// if we all callbacks came back we are done!
 	if (this.openCallbacks.length == 0) {
-		
+
 		// unset the timer...
 		clearTimeout(timer);
-		
+
 		// sort items by weight
-		items.sort(function (a,b) {return b.weight - a.weight;});
-	    
+		items.sort(function (a,b) {
+			return (b.weight || 0) - (a.weight || 0);
+		});
+
 		// prepare result data for the JSON Reader
 		var result =  {
-			    results: items.length,
-			    items: items
-		 	 };
-		
+			results: items.length,
+			items: items
+		};
+
 		// Give data back.
 		cb.call( this, result);
 	}
@@ -370,17 +372,28 @@ GENTICS.Aloha.RepositoryManager.prototype.makeClean = function(obj) {
  * * data-GENTICS-aloha-repository: stores the repositoryId
  * * data-GENTICS-aloha-object-id: stores the object.id
  * @param obj {DOMObject} DOM object to mark
- * @param object {Aloha.Repository.Object} the item which is applied to obj
+ * @param object {Aloha.Repository.Object} the item which is applied to obj,
+ * 	if set to null, the data-GENTICS-... attributes are removed
  * @return void
  */
 GENTICS.Aloha.RepositoryManager.prototype.markObject = function (obj, item) {
-	var repository = this.getRepository(item.repositoryId);
-	if ( repository ) {
-		jQuery(obj).attr('data-GENTICS-aloha-repository', item.repositoryId);
-		jQuery(obj).attr('data-GENTICS-aloha-object-id', item.id);
-		repository.markObject(obj, item);
+	// nothing to do, if no object given
+	if (!obj) {
+		return;
+	}
+	if (item) {
+		var repository = this.getRepository(item.repositoryId);
+		if ( repository ) {
+			jQuery(obj).attr('data-GENTICS-aloha-repository', item.repositoryId);
+			jQuery(obj).attr('data-GENTICS-aloha-object-id', item.id);
+			repository.markObject(obj, item);
+		} else {
+			GENTICS.Aloha.Log.error(this, "Trying to apply a repository { " + item.name + " } to an object, but item has no repositoryId.");
+		}
 	} else {
-		GENTICS.Aloha.Log.error(this, "Trying to apply a repository { " + item.name + " } to an object, but item has no repositoryId.");
+		// remove the data attributes
+		jQuery(obj).removeAttr('data-GENTICS-aloha-repository');
+		jQuery(obj).removeAttr('data-GENTICS-aloha-object-id');
 	}
 };
 

@@ -166,9 +166,19 @@ GENTICS.Aloha.Editable.prototype.init = function() {
 		
 		// add focus event to the object to activate
 		this.obj.mousedown(function(e) {
-			return that.activate(e);
+			// check whether the mousedown was already handled
+			if (!GENTICS.Aloha.eventHandled) {
+				GENTICS.Aloha.eventHandled = true;
+				return that.activate(e);
+			} else {
+				return;
+			}
 		});
-		
+
+		this.obj.mouseup(function(e) {
+			GENTICS.Aloha.eventHandled = false;
+		});
+
 		this.obj.focus(function(e) {
 			return that.activate(e);
 		});
@@ -369,11 +379,6 @@ GENTICS.Aloha.Editable.prototype.enable = function() {
  * @method
  */
 GENTICS.Aloha.Editable.prototype.activate = function(e) {
-	// stop event propagation for nested editables
-	if (e) {
-		e.stopPropagation();
-	}
-
 	// get active Editable before setting the new one.
 	var oldActive = GENTICS.Aloha.getActiveEditable(); 
 
@@ -395,10 +400,10 @@ GENTICS.Aloha.Editable.prototype.activate = function(e) {
 	// set active Editable in core
 	GENTICS.Aloha.activateEditable( this );
 	
-	// ie specific: trigger one mouseup click to update the range-object
-	if (document.selection && document.selection.createRange) {
-		this.obj.mouseup();
-	}
+//	// ie specific: trigger one mouseup click to update the range-object
+//	if (document.selection && document.selection.createRange) {
+//		this.obj.mouseup();
+//	}
 
 	// finally mark this object as active
 	this.isActive = true;

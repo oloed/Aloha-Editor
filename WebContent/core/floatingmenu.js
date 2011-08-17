@@ -289,6 +289,10 @@ GENTICS.Aloha.FloatingMenu.generateComponent = function () {
 		.html('&#160;')
 		.mousedown(function (e) {
 			that.togglePin();
+			// Note: this event is deliberately stopped here, although normally,
+			// we would set the flag GENTICS.Aloha.eventHandled instead.
+			// But when the event bubbles up, no tab would be selected and
+			// the floatingmenu would be rather thin.
 			e.stopPropagation();
 		});
 	
@@ -330,14 +334,18 @@ GENTICS.Aloha.FloatingMenu.generateComponent = function () {
 
 	// for now, position the panel somewhere
 	this.extTabPanel.setPosition(this.left, this.top);
-	
-	// disable event bubbling for mousedown, because we don't want to recognize
+
+	// mark the event being handled by aloha, because we don't want to recognize
 	// a click into the floatingmenu to be a click into nowhere (which would
 	// deactivate the editables)
 	this.obj.mousedown(function (e) {
-		e.stopPropagation();
+		GENTICS.Aloha.eventHandled = true;
 	});
-	
+
+	this.obj.mouseup(function (e) {
+		GENTICS.Aloha.eventHandled = false;
+	});
+
 	// adjust float behaviour
 	if (this.behaviour === 'float') {
 		// listen to selectionChanged event
@@ -979,6 +987,9 @@ GENTICS.Aloha.FloatingMenu.Group.prototype.doLayout = function () {
 		if (buttonVisible && extButton.hidden) {
 			extButton.show();
 		} else if (!buttonVisible && !extButton.hidden) {
+			if (extButton.btnEl) {
+				extButton.blur();
+			}
 			extButton.hide();
 		}
 
